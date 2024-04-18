@@ -1,0 +1,37 @@
+{
+    "name": "koishi-plugin-gif-reverse",
+    "description": "Rewind GIF images",
+    "version": "0.2.0",
+    "main": "lib/index.js",
+    "typings": "lib/index.d.ts",
+    "files": [
+        "lib",
+        "dist"
+    ],
+    "license": "MIT",
+    "keywords": [
+        "chatbot",
+        "koishi",
+        "plugin",
+        "gif",
+        "reverse",
+        "rewind",
+        "image"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/idanran/koishi-plugin-gif-reverse.git"
+    },
+    "koishi": {
+        "description": {
+            "en": "Rewind GIF images",
+            "zh": "对 GIF 图片进行倒放处理"
+        }
+    },
+    "peerDependencies": {
+        "koishi": "^4.16.4"
+    },
+    "devDependencies": {
+        "koishi-plugin-ffmpeg": "^1.1.0"
+    }
+}

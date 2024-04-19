@@ -18,15 +18,15 @@ export function apply(ctx: Context, cfg: Config) {
     ctx.command('gif-reverse [gif:image]', '对 GIF 图片进行倒放')
         .alias('倒放')
         .action(async ({ session }, gif) => {
-            if (!gif && session.quote) {
+            /*if (!gif && session.quote) {
                 const { quote } = session
                 if (quote.elements) {
-                    gif = h.select(quote.elements, 'img')[0]
+                    gif = h.select(quote.elements, 'img')[0].attrs
                 } else {
                     const { elements } = await session.bot.getMessage(session.channelId, quote.id)
-                    gif = h.select(elements, 'img')[0]
+                    gif = h.select(elements, 'img')[0].attrs
                 }
-            }
+            }*/
             
             const quote = h.quote(session.messageId)
             if (!gif) return `${quote}未检测到图片输入。`

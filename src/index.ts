@@ -27,17 +27,19 @@ export function apply(ctx: Context, cfg: Config) {
                     gif = h.select(elements, 'img')[0]
                 }
             }
-            if (!gif) return '未检测到图片输入。'
+            
+            const quote = h.quote(session.messageId)
+            if (!gif) return `${quote}未检测到图片输入。`
 
             const file = await ctx.http.file(gif.src)
             if (!['image/gif', 'application/octet-stream'].includes(file.mime)) {
-                return '无法处理非 GIF 图片。'
+                return `${quote}无法处理非 GIF 图片。`
             }
             const path = join(TMP_DIR, `prepare-reverse-${Date.now()}`)
             await writeFile(path, Buffer.from(file.data))
             const buf = await ctx.ffmpeg.builder().input(path).outputOption('-vf', 'reverse', '-f', 'gif').run('buffer')
             await unlink(path)
-            if (buf.length === 0) return '图片生成失败。'
-            return h.img(buf, 'image/gif')
+            if (buf.length === 0) return `${quote}图片生成失败。`
+            return [quote, h.img(buf, 'image/gif')]
         })
 }

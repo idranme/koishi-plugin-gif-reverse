@@ -35,9 +35,9 @@ export function apply(ctx: Context, cfg: Config) {
             if (!['image/gif', 'application/octet-stream'].includes(file.mime)) {
                 return `${quote}无法处理非 GIF 图片。`
             }
-            const path = join(TMP_DIR, `prepare-reverse-${Date.now()}`)
+            const path = join(TMP_DIR, `gif-reverse-${Date.now()}`)
             await writeFile(path, Buffer.from(file.data))
-            const buf = await ctx.ffmpeg.builder().input(path).outputOption('-vf', 'reverse', '-f', 'gif').run('buffer')
+            const buf = await ctx.ffmpeg.builder().input(path).outputOption('-vf', 'reverse,split[s0][s1];[s0]palettegen=stats_mode=single[p];[s1][p]paletteuse=new=1', '-f', 'gif').run('buffer')
             await unlink(path)
             if (buf.length === 0) return `${quote}图片生成失败。`
             return [quote, h.img(buf, 'image/gif')]

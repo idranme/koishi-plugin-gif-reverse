@@ -27,6 +27,13 @@ export function apply(ctx: Context, cfg: Config) {
                     gif = h.select(elements, 'img')[0].attrs
                 }
             }*/
+            if (!gif) {
+                await session.send('在 60 秒内发送想要倒放的 GIF')
+                const content = await session.prompt(60000)
+                if (content !== undefined) {
+                    gif = h.select(content, 'img')[0]?.attrs
+                }
+            }
 
             const quote = h.quote(session.messageId)
             if (!gif) return `${quote}未检测到图片输入。`

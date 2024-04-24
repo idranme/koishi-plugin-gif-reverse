@@ -27,7 +27,7 @@ export function apply(ctx: Context, cfg: Config) {
                     gif = h.select(elements, 'img')[0].attrs
                 }
             }*/
-            
+
             const quote = h.quote(session.messageId)
             if (!gif) return `${quote}未检测到图片输入。`
 
@@ -37,7 +37,11 @@ export function apply(ctx: Context, cfg: Config) {
             }
             const path = join(TMP_DIR, `gif-reverse-${Date.now()}`)
             await writeFile(path, Buffer.from(file.data))
-            const buf = await ctx.ffmpeg.builder().input(path).outputOption('-vf', 'reverse,split[s0][s1];[s0]palettegen=stats_mode=single[p];[s1][p]paletteuse=new=1', '-f', 'gif').run('buffer')
+            const buf = await ctx.ffmpeg
+                .builder()
+                .input(path)
+                .outputOption('-vf', 'reverse,split[s0][s1];[s0]palettegen=stats_mode=single[p];[s1][p]paletteuse=new=1', '-f', 'gif', '-gifflags', '-offsetting')
+                .run('buffer')
             await unlink(path)
             if (buf.length === 0) return `${quote}图片生成失败。`
             return [quote, h.img(buf, 'image/gif')]

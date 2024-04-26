@@ -17,16 +17,10 @@ export function apply(ctx: Context, cfg: Config) {
     const TMP_DIR = tmpdir()
     ctx.command('gif-reverse [gif:image]', '对 GIF 图片进行倒放')
         .alias('倒放')
-        .action(async ({ session }, gif) => {
-            /*if (!gif && session.quote) {
-                const { quote } = session
-                if (quote.elements) {
-                    gif = h.select(quote.elements, 'img')[0].attrs
-                } else {
-                    const { elements } = await session.bot.getMessage(session.channelId, quote.id)
-                    gif = h.select(elements, 'img')[0].attrs
-                }
-            }*/
+        .option('pts', '-p <times:number> 改变每个帧的显示时间戳（大于 1 为减速，小于则为加速）', { fallback: 1 })
+        .action(async ({ session, options }, gif) => {
+            const { pts } = options
+            if (pts <= 0) return 'PTS 必须大于 0'
             if (!gif) {
                 await session.send('在 60 秒内发送想要倒放的 GIF')
                 const content = await session.prompt(60000)
@@ -44,10 +38,14 @@ export function apply(ctx: Context, cfg: Config) {
             }
             const path = join(TMP_DIR, `gif-reverse-${Date.now()}`)
             await writeFile(path, Buffer.from(file.data))
+            let vf = 'reverse,split[s0][s1];[s0]palettegen=stats_mode=single[p];[s1][p]paletteuse=new=1'
+            if (pts !== 1) {
+                vf = `setpts=${pts}*PTS,` + vf
+            }
             const buf = await ctx.ffmpeg
                 .builder()
                 .input(path)
-                .outputOption('-vf', 'reverse,split[s0][s1];[s0]palettegen=stats_mode=single[p];[s1][p]paletteuse=new=1', '-f', 'gif', '-gifflags', '-offsetting')
+                .outputOption('-vf', vf, '-f', 'gif', '-gifflags', '-offsetting')
                 .run('buffer')
             await unlink(path)
             if (buf.length === 0) return `${quote}图片生成失败。`

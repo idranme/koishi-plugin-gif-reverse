@@ -22,11 +22,14 @@ export function apply(ctx: Context, cfg: Config) {
             const { pts } = options
             if (pts <= 0) return 'PTS 必须大于 0'
             if (!gif) {
-                await session.send('在 60 秒内发送想要倒放的 GIF')
-                const content = await session.prompt(60000)
+                const [msgId] = await session.send('在 50 秒内发送想要倒放的 GIF')
+                const content = await session.prompt(50000)
                 if (content !== undefined) {
                     gif = h.select(content, 'img')[0]?.attrs
                 }
+                try {
+                    session.bot.deleteMessage(session.channelId, msgId)
+                } catch { }
             }
 
             const quote = h.quote(session.messageId)

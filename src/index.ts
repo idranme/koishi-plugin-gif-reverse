@@ -36,7 +36,7 @@ export function apply(ctx: Context, cfg: Config) {
             if (!gif) return `${quote}未检测到图片输入。`
 
             const file = await ctx.http.file(gif.src)
-            if (!['image/gif', 'application/octet-stream'].includes(file.mime)) {
+            if (!['image/gif', 'application/octet-stream', 'video/mp4'].includes(file.type)) {
                 return `${quote}无法处理非 GIF 图片。`
             }
             const path = join(TMP_DIR, `gif-reverse-${Date.now()}`)
@@ -50,7 +50,7 @@ export function apply(ctx: Context, cfg: Config) {
                 .input(path)
                 .outputOption('-vf', vf, '-f', 'gif', '-gifflags', '-offsetting')
                 .run('buffer')
-            await unlink(path)
+            unlink(path)
             if (buf.length === 0) return `${quote}图片生成失败。`
             return [quote, h.img(buf, 'image/gif')]
         })

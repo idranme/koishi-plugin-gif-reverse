@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-gif-reverse",
   "description": "Rewind GIF images",
-  "version": "1.4.0",
+  "version": "1.5.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -20,12 +20,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/idranme/koishi-plugin-gif-reverse.git"
+    "url": "https://github.com/idranme/koishi-plugin-gif-reverse"
   },
   "koishi": {
     "description": {
       "en": "Rewind GIF images",
-      "zh": "对 GIF 图片进行倒放处理"
+      "zh": "对 GIF 图片进行处理。支持倒放/正放、变速、滑动、旋转、翻转"
     }
   },
   "peerDependencies": {
@@ -33,5 +33,8 @@
   },
   "devDependencies": {
     "koishi-plugin-ffmpeg": "^1.1.0"
+  },
+  "dependencies": {
+    "gifuct-js": "^2.1.2"
   }
 }

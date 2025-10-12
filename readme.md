@@ -6,7 +6,7 @@
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | npm 包               | [https://www.npmjs.com/package/koishi-plugin-gif-reverse](https://www.npmjs.com/package/koishi-plugin-gif-reverse)                                                     |
 | idranme 仓库         | [https://github.com/idranme/koishi-plugin-gif-reverse](https://github.com/idranme/koishi-plugin-gif-reverse)                                                           |
-| shangxueink 发布仓库 | [https://github.com/shangxueink/koishi-shangxue-apps/blob/main/plugins/gif-reverse](https://github.com/shangxueink/koishi-shangxue-apps/blob/main/plugins/gif-reverse) |
+
 
 
 处理 GIF 图片，提供倒放/正放、变速、滑动、旋转、翻转功能。
@@ -111,5 +111,6 @@
 </details>
 
 完整使用方法请使用 <code>gif -h</code> 查看指令用法
+
 
 ---

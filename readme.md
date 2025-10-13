@@ -2,10 +2,10 @@
 
 [![npm](https://img.shields.io/npm/v/koishi-plugin-gif-reverse?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-gif-reverse)
 
-| 位置                 | 仓库地址                                                                                                                                                               |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| npm 包               | [https://www.npmjs.com/package/koishi-plugin-gif-reverse](https://www.npmjs.com/package/koishi-plugin-gif-reverse)                                                     |
-| idranme 仓库         | [https://github.com/idranme/koishi-plugin-gif-reverse](https://github.com/idranme/koishi-plugin-gif-reverse)                                                           |
+| 位置         | 仓库地址                                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------------------------ |
+| npm 包       | [https://www.npmjs.com/package/koishi-plugin-gif-reverse](https://www.npmjs.com/package/koishi-plugin-gif-reverse) |
+| idranme 仓库 | [https://github.com/idranme/koishi-plugin-gif-reverse](https://github.com/idranme/koishi-plugin-gif-reverse)       |
 
 
 

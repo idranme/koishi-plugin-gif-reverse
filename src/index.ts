@@ -66,7 +66,7 @@ export const usage = `
 <tr>
 <td><code>--frame</code></td>
 <td><code>-f</code></td>
-<td>指定处理gif的平均帧间隔</td>
+<td>指定处理gif的帧间隔</td>
 <td><code>number</code></td>
 </tr>
 <tr>
@@ -86,6 +86,12 @@ export const usage = `
 <td><code>-t</code></td>
 <td>转向角度 (上/下/左/右/0-360)</td>
 <td><code>string</code></td>
+</tr>
+<tr>
+<td><code>--shake</code></td>
+<td><code>-s</code></td>
+<td>上下震动效果</td>
+<td><code>boolean</code></td>
 </tr>
 <tr>
 <td><code>--information</code></td>
@@ -131,6 +137,9 @@ export const usage = `
 <li><strong>顺时针旋转:</strong>
 <pre><code>gif -o 顺</code></pre>
 </li>
+<li><strong>上下震动:</strong>
+<pre><code>gif -s</code></pre>
+</li>
 <li><strong>显示 GIF 信息:</strong>
 <pre><code>gif -i</code></pre>
 </li>
@@ -170,7 +179,7 @@ export function apply(ctx: Context, config) {
     commands: {
       [config.gifCommand]: {
         arguments: {
-          gif: "图片消息",
+          args: "图片消息",
         },
         description: "GIF 图片处理",
         messages: {
@@ -183,16 +192,17 @@ export function apply(ctx: Context, config) {
           "invalidDirection": "无效的方向参数，请选择：左、右、上、下",
           "invalidRotation": "无效的旋转方向，请选择：顺、逆",
           "invalidTurn": "无效的转向角度，请输入 0-360 之间的数字，或 上/下/左/右/左上/左下/右上/右下",
-          "information": "\n图片信息：\n文件大小：{0} KB\n图片尺寸：{1}x{2}\n帧数：{3}\n平均帧间隔：{4} 毫秒\n帧率：{5} FPS\n总时长：{6} 秒\n",
+          "information": "\n图片信息：\n文件大小：{0} KB\n图片尺寸：{1}x{2}\n帧数：{3}\n帧间隔：{4} 毫秒\n帧率：{5} FPS\n总时长：{6} 秒\n",
         },
         options: {
           help: "查看指令帮助",
           rebound: "回弹效果（正放+倒放）",
           reverse: " 倒放 GIF",
-          frame: "指定处理gif的平均帧间隔（毫秒，必须是正整数）",
+          frame: "指定gif的帧间隔（毫秒，正整数）",
           slide: "滑动方向 (上/下/左/右)",
           rotate: "旋转方向 (顺/逆)",
           turn: "转向角度 (上/下/左/右/左上/左下/右上/右下/0-360)",
+          shake: "上下震动效果",
           information: "显示图片信息",
         }
       },
@@ -206,19 +216,22 @@ export function apply(ctx: Context, config) {
     .option('slide', '-l <direction:string>', { type: 'string' })
     .option('rotate', '-o <direction:string>', { type: 'string' })
     .option('turn', '-t <angle:string>', { type: 'string' })
+    .option('shake', '-s, --shake', { type: 'boolean' })
     .option('information', '-i, --information', { type: 'boolean' })
-    .example(`回弹：${config.gifCommand} -b`)
-    .example(`倒放：${config.gifCommand} -r`)
-    .example(`指定帧间隔：${config.gifCommand} -f 20`)
-    .example(`右滑：${config.gifCommand} -l 右`)
-    .example(`逆时针旋转：${config.gifCommand} -o 逆`)
-    .example(`转向30度：${config.gifCommand} -t 30`)
-    .example(`转向向左上：${config.gifCommand} -t 左上`)
-    .example(`45度右滑：${config.gifCommand} -l 右 -t 45`)
-    .example(`顺时针旋转：${config.gifCommand} -o 顺`)
-    .example(`显示图片信息: ${config.gifCommand} -i`)
+    .example(`➣注意：选项参数与图片参数之间有空格`)
+    .example(`回弹：${ctx.root.config.prefix[0]}${config.gifCommand} -b [图片]`)
+    .example(`倒放：${ctx.root.config.prefix[0]}${config.gifCommand} -r [图片]`)
+    .example(`指定帧间隔：${ctx.root.config.prefix[0]}${config.gifCommand} -f 20 [图片]`)
+    .example(`右滑：${ctx.root.config.prefix[0]}${config.gifCommand} -l 右 [图片]`)
+    .example(`逆时针旋转：${ctx.root.config.prefix[0]}${config.gifCommand} -o 逆 [图片]`)
+    .example(`转向30度：${ctx.root.config.prefix[0]}${config.gifCommand} -t 30 [图片]`)
+    .example(`转向向左上：${ctx.root.config.prefix[0]}${config.gifCommand} -t 左上 [图片]`)
+    .example(`45度右滑：${ctx.root.config.prefix[0]}${config.gifCommand} -l 右 -t 45 [图片]`)
+    .example(`顺时针旋转：${ctx.root.config.prefix[0]}${config.gifCommand} -o 顺 [图片]`)
+    .example(`上下震动：${ctx.root.config.prefix[0]}${config.gifCommand} -s [图片]`)
+    .example(`显示图片信息: ${ctx.root.config.prefix[0]}${config.gifCommand} -i [图片]`)
     .action(async ({ session, options, args }) => {
-      let { reverse, rebound, frame, slide, rotate, turn, information } = options
+      let { reverse, rebound, frame, slide, rotate, turn, shake, information } = options
       const fillcolorHex = rgbaToHex(config.fillcolor);
       logInfo(options)
       logInfo("使用的底色：", config.fillcolor, " -> ", fillcolorHex)
@@ -450,6 +463,8 @@ export function apply(ctx: Context, config) {
           optionOrder.push('slide');
         } else if (option === '-t' || option === '--turn') {
           optionOrder.push('turn');
+        } else if (option === '-s' || option === '--shake') {
+          optionOrder.push('shake');
         } else if (option === '-o' || option === '--rotate') {
           optionOrder.push('rotate');
         } else if (option === '-f' || option === '--frame') {
@@ -582,6 +597,38 @@ export function apply(ctx: Context, config) {
           }
         },
 
+        // 应用上下震动效果
+        shake: () => {
+          if (shake) {
+            try {
+              let shakeFilter = '';
+              // 震动幅度按照图片高度的3%计算，最小12像素
+              const amplitude = Math.max(12, Math.round(originalHeight * 0.03));
+              // 偏移量为震动幅度的2倍，确保震动范围合理
+              const offset = amplitude * 2;
+              // 裁剪后的高度 = 原高度 - 震动范围
+              const cropHeight = originalHeight - (amplitude * 2);
+
+              if (cropHeight <= 0) {
+                // 图片太小，无法震动
+                logInfo('图片高度太小，跳过震动效果');
+                return;
+              }
+
+              if (isStaticProcessing) {
+                shakeFilter = `crop=${originalWidth}:${cropHeight}:0:'${offset}+${amplitude}*sin(2*PI*t*6)'`;
+              } else {
+                shakeFilter = `crop=${originalWidth}:${cropHeight}:0:'${offset}+${amplitude}*sin(2*PI*t*6)',setpts=PTS-STARTPTS`;
+              }
+
+              filters.push(shakeFilter);
+            } catch (error) {
+              logger.error("处理上下震动效果时发生错误:", error);
+              throw new Error("generatefailed");
+            }
+          }
+        },
+
         // 应用滑动效果
         slide: () => {
           if (slide) {
@@ -650,6 +697,7 @@ export function apply(ctx: Context, config) {
           if (frame) effectHandlers.frame();
           if (turn) effectHandlers.turn();
           if (rotate) effectHandlers.rotate();
+          if (shake) effectHandlers.shake();
           if (slide) effectHandlers.slide();
         } else {
           // 按照输入的选项顺序处理
@@ -660,7 +708,7 @@ export function apply(ctx: Context, config) {
 
           // 然后按照指定的顺序处理空间变换效果
           for (const option of optionOrder) {
-            if (['turn', 'rotate', 'slide'].includes(option)) {
+            if (['turn', 'rotate', 'shake', 'slide'].includes(option)) {
               effectHandlers[option]();
             }
           }

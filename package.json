@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-gif-reverse",
   "description": "Process GIF images. Supports viewing GIF information, reversing, bouncing, changing speed, sliding, rotating, and turning GIFs. [Click here to view README](https://www.npmjs.com/package/koishi-plugin-gif-reverse). [Click here to preview effects](https://i0.hdslb.com/bfs/article/e1421ea81d2de817a0cd37ba83eb34e2312276085.gif)",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -20,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/idranme/koishi-plugin-gif-reverse"
+    "url": "git+https://github.com/idranme/koishi-plugin-gif-reverse.git"
   },
   "koishi": {
     "description": {

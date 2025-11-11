@@ -157,6 +157,7 @@ export const Config =
   Schema.intersect([
     Schema.object({
       gifCommand: Schema.string().default("gif-reverse").description("注册的指令名称"),
+      commandPrefix: Schema.string().description("在指令示例中显示的指令前缀。例如“/”。如果留空，则不显示前缀。").default(""),
       waitTimeout: Schema.number().default(50).max(120).min(10).step(1).description("等待输入图片的最大时间（秒）"),
     }).description('基础设置'),
     Schema.object({
@@ -182,6 +183,19 @@ export function apply(ctx: Context, config) {
           args: "图片消息",
         },
         description: "GIF 图片处理",
+        examples:
+          '➣注意：选项参数与图片参数之间有空格\n' +
+          `回弹：${config.commandPrefix}${config.gifCommand} -b [图片]\n` +
+          `倒放：${config.commandPrefix}${config.gifCommand} -r [图片]\n` +
+          `指定帧间隔：${config.commandPrefix}${config.gifCommand} -f 20 [图片]\n` +
+          `右滑：${config.commandPrefix}${config.gifCommand} -l 右 [图片]\n` +
+          `逆时针旋转：${config.commandPrefix}${config.gifCommand} -o 逆 [图片]\n` +
+          `转向30度：${config.commandPrefix}${config.gifCommand} -t 30 [图片]\n` +
+          `转向向左上：${config.commandPrefix}${config.gifCommand} -t 左上 [图片]\n` +
+          `45度右滑：${config.commandPrefix}${config.gifCommand} -l 右 -t 45 [图片]\n` +
+          `顺时针旋转：${config.commandPrefix}${config.gifCommand} -o 顺 [图片]\n` +
+          `上下震动：${config.commandPrefix}${config.gifCommand} -s [图片]\n` +
+          `显示图片信息: ${config.commandPrefix}${config.gifCommand} -i [图片]`,
         messages: {
           "invalidFFmpeg": "没有安装 FFmpeg 服务！",
           "invalidFrame": "帧间隔必须是正整数",
@@ -218,18 +232,6 @@ export function apply(ctx: Context, config) {
     .option('turn', '-t <angle:string>', { type: 'string' })
     .option('shake', '-s, --shake', { type: 'boolean' })
     .option('information', '-i, --information', { type: 'boolean' })
-    .example(`➣注意：选项参数与图片参数之间有空格`)
-    .example(`回弹：${ctx.root.config.prefix[0]}${config.gifCommand} -b [图片]`)
-    .example(`倒放：${ctx.root.config.prefix[0]}${config.gifCommand} -r [图片]`)
-    .example(`指定帧间隔：${ctx.root.config.prefix[0]}${config.gifCommand} -f 20 [图片]`)
-    .example(`右滑：${ctx.root.config.prefix[0]}${config.gifCommand} -l 右 [图片]`)
-    .example(`逆时针旋转：${ctx.root.config.prefix[0]}${config.gifCommand} -o 逆 [图片]`)
-    .example(`转向30度：${ctx.root.config.prefix[0]}${config.gifCommand} -t 30 [图片]`)
-    .example(`转向向左上：${ctx.root.config.prefix[0]}${config.gifCommand} -t 左上 [图片]`)
-    .example(`45度右滑：${ctx.root.config.prefix[0]}${config.gifCommand} -l 右 -t 45 [图片]`)
-    .example(`顺时针旋转：${ctx.root.config.prefix[0]}${config.gifCommand} -o 顺 [图片]`)
-    .example(`上下震动：${ctx.root.config.prefix[0]}${config.gifCommand} -s [图片]`)
-    .example(`显示图片信息: ${ctx.root.config.prefix[0]}${config.gifCommand} -i [图片]`)
     .action(async ({ session, options, args }) => {
       let { reverse, rebound, frame, slide, rotate, turn, shake, information } = options
       const fillcolorHex = rgbaToHex(config.fillcolor);

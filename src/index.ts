@@ -223,6 +223,53 @@ export function apply(ctx: Context, config) {
     }
   });
 
+  ctx.i18n.define("en-US", {
+    commands: {
+      [config.gifCommand]: {
+        arguments: {
+          args: "image",
+        },
+        description: "GIF Image Processing",
+        examples:
+          'Note: There is a space between the option and the image argument.\n' +
+          `Rebound: ${config.commandPrefix}${config.gifCommand} -b [image]\n` +
+          `Reverse: ${config.commandPrefix}${config.gifCommand} -r [image]\n` +
+          `Set frame delay: ${config.commandPrefix}${config.gifCommand} -f 20 [image]\n` +
+          `Slide right: ${config.commandPrefix}${config.gifCommand} -l right [image]\n` +
+          `Rotate counter-clockwise: ${config.commandPrefix}${config.gifCommand} -o ccw [image]\n` +
+          `Turn 30 degrees: ${config.commandPrefix}${config.gifCommand} -t 30 [image]\n` +
+          `Turn to top-left: ${config.commandPrefix}${config.gifCommand} -t top-left [image]\n` +
+          `Slide right at 45 degrees: ${config.commandPrefix}${config.gifCommand} -l right -t 45 [image]\n` +
+          `Rotate clockwise: ${config.commandPrefix}${config.gifCommand} -o cw [image]\n` +
+          `Shake vertically: ${config.commandPrefix}${config.gifCommand} -s [image]\n` +
+          `Show image info: ${config.commandPrefix}${config.gifCommand} -i [image]`,
+        messages: {
+          "invalidFFmpeg": "FFmpeg service is not installed!",
+          "invalidFrame": "Frame delay must be a positive integer.",
+          "waitprompt": "Please send the image to process within {0} seconds.",
+          "invalidimage": "No image input detected, please try again.",
+          "invalidGIF": "Cannot process this image format. Please use GIF, JPEG, PNG, or WebP.",
+          "generatefailed": "Image generation failed.",
+          "invalidDirection": "Invalid direction. Please choose from: left, right, up, down.",
+          "invalidRotation": "Invalid rotation direction. Please choose from: cw (clockwise), ccw (counter-clockwise).",
+          "invalidTurn": "Invalid turn angle. Please enter a number between 0-360, or up/down/left/right/top-left/bottom-left/top-right/bottom-right.",
+          "information": "\nImage Info:\nFile Size: {0} KB\nDimensions: {1}x{2}\nFrames: {3}\nFrame Delay: {4} ms\nFrame Rate: {5} FPS\nTotal Duration: {6} s\n",
+        },
+        options: {
+          help: "Show command help.",
+          rebound: "Rebound effect (forward + reverse).",
+          reverse: "Reverse the GIF.",
+          frame: "Specify the frame delay for the GIF (in milliseconds, positive integer).",
+          slide: "Sliding direction (up/down/left/right).",
+          rotate: "Rotation direction (cw/ccw).",
+          turn: "Turn angle (up/down/left/right/top-left/bottom-left/top-right/bottom-right/0-360).",
+          shake: "Vertical shake effect.",
+          information: "Show image information.",
+        }
+      },
+    }
+  });
+
   ctx.command(`${config.gifCommand} [...args]`)
     .option('rebound', '-b, --rebound', { type: 'boolean' })
     .option('reverse', '-r, --reverse', { type: 'boolean' })
@@ -237,52 +284,6 @@ export function apply(ctx: Context, config) {
       const fillcolorHex = rgbaToHex(config.fillcolor);
       logInfo(options)
 
-      ctx.i18n.define("en-US", {
-        commands: {
-          [config.gifCommand]: {
-            arguments: {
-              args: "image",
-            },
-            description: "GIF Image Processing",
-            examples:
-              'Note: There is a space between the option and the image argument.\n' +
-              `Rebound: ${config.commandPrefix}${config.gifCommand} -b [image]\n` +
-              `Reverse: ${config.commandPrefix}${config.gifCommand} -r [image]\n` +
-              `Set frame delay: ${config.commandPrefix}${config.gifCommand} -f 20 [image]\n` +
-              `Slide right: ${config.commandPrefix}${config.gifCommand} -l right [image]\n` +
-              `Rotate counter-clockwise: ${config.commandPrefix}${config.gifCommand} -o ccw [image]\n` +
-              `Turn 30 degrees: ${config.commandPrefix}${config.gifCommand} -t 30 [image]\n` +
-              `Turn to top-left: ${config.commandPrefix}${config.gifCommand} -t top-left [image]\n` +
-              `Slide right at 45 degrees: ${config.commandPrefix}${config.gifCommand} -l right -t 45 [image]\n` +
-              `Rotate clockwise: ${config.commandPrefix}${config.gifCommand} -o cw [image]\n` +
-              `Shake vertically: ${config.commandPrefix}${config.gifCommand} -s [image]\n` +
-              `Show image info: ${config.commandPrefix}${config.gifCommand} -i [image]`,
-            messages: {
-              "invalidFFmpeg": "FFmpeg service is not installed!",
-              "invalidFrame": "Frame delay must be a positive integer.",
-              "waitprompt": "Please send the image to process within {0} seconds.",
-              "invalidimage": "No image input detected, please try again.",
-              "invalidGIF": "Cannot process this image format. Please use GIF, JPEG, PNG, or WebP.",
-              "generatefailed": "Image generation failed.",
-              "invalidDirection": "Invalid direction. Please choose from: left, right, up, down.",
-              "invalidRotation": "Invalid rotation direction. Please choose from: cw (clockwise), ccw (counter-clockwise).",
-              "invalidTurn": "Invalid turn angle. Please enter a number between 0-360, or up/down/left/right/top-left/bottom-left/top-right/bottom-right.",
-              "information": "\nImage Info:\nFile Size: {0} KB\nDimensions: {1}x{2}\nFrames: {3}\nFrame Delay: {4} ms\nFrame Rate: {5} FPS\nTotal Duration: {6} s\n",
-            },
-            options: {
-              help: "Show command help.",
-              rebound: "Rebound effect (forward + reverse).",
-              reverse: "Reverse the GIF.",
-              frame: "Specify the frame delay for the GIF (in milliseconds, positive integer).",
-              slide: "Sliding direction (up/down/left/right).",
-              rotate: "Rotation direction (cw/ccw).",
-              turn: "Turn angle (up/down/left/right/top-left/bottom-left/top-right/bottom-right/0-360).",
-              shake: "Vertical shake effect.",
-              information: "Show image information.",
-            }
-          },
-        }
-      });
       logInfo("使用的底色：", config.fillcolor, " -> ", fillcolorHex)
 
       if (!ctx.ffmpeg) {
